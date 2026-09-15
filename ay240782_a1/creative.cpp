@@ -20,6 +20,9 @@ GLfloat colors[MAX_VERTICES][4];
 int numVertices = 0;
 
 int backgroundStart, backgroundCount;
+int bubbleOuterStart, bubbleOuterCount;
+int bubbleInnerStart, bubbleInnerCount;
+int tailOuterStart, tailInnerStart;
 
 void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
 {
@@ -49,11 +52,48 @@ void addBackground(int bands)
     }
 }
 
+void addEllipse(GLfloat cx, GLfloat cy, GLfloat rx, GLfloat ry,
+                GLfloat r, GLfloat g, GLfloat b, int segments)
+{
+    addVertex(cx, cy, r, g, b);
+
+    for (int i = 0; i <= segments; i++) {
+        GLfloat angle = 2.0f * M_PI * i / segments;
+        GLfloat x = cx + rx * cos(angle);
+        GLfloat y = cy + ry * sin(angle);
+        addVertex(x, y, r, g, b);
+    }
+}
+
+void addTriangleShape(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
+                      GLfloat x3, GLfloat y3, GLfloat r, GLfloat g, GLfloat b)
+{
+    addVertex(x1, y1, r, g, b);
+    addVertex(x2, y2, r, g, b);
+    addVertex(x3, y3, r, g, b);
+}
+
 void buildScene()
 {
     backgroundStart = numVertices;
     addBackground(20);
     backgroundCount = numVertices - backgroundStart;
+
+    bubbleOuterStart = numVertices;
+    addEllipse(0.0f, 0.62f, 0.62f, 0.28f, 0.0f, 0.0f, 0.0f, 60);
+    bubbleOuterCount = numVertices - bubbleOuterStart;
+
+    tailOuterStart = numVertices;
+    addTriangleShape(0.06f, 0.38f, 0.26f, 0.38f, 0.14f, 0.12f,
+                     0.0f, 0.0f, 0.0f);
+
+    bubbleInnerStart = numVertices;
+    addEllipse(0.0f, 0.62f, 0.60f, 0.26f, 1.0f, 1.0f, 1.0f, 60);
+    bubbleInnerCount = numVertices - bubbleInnerStart;
+
+    tailInnerStart = numVertices;
+    addTriangleShape(0.085f, 0.37f, 0.235f, 0.37f, 0.145f, 0.17f,
+                     1.0f, 1.0f, 1.0f);
 }
 
 void init()
@@ -90,6 +130,12 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLE_STRIP, backgroundStart, backgroundCount);
+
+    glDrawArrays(GL_TRIANGLE_FAN, bubbleOuterStart, bubbleOuterCount);
+    glDrawArrays(GL_TRIANGLES, tailOuterStart, 3);
+    glDrawArrays(GL_TRIANGLE_FAN, bubbleInnerStart, bubbleInnerCount);
+    glDrawArrays(GL_TRIANGLES, tailInnerStart, 3);
+
     glutSwapBuffers();
 }
 
