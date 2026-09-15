@@ -11,6 +11,18 @@
 #include <cstdlib>
 #include <cstdio>
 
+GLfloat vertices[3][4] = {
+    {  0.0f,  0.8f, 0.0f, 1.0f },
+    { -0.8f, -0.8f, 0.0f, 1.0f },
+    {  0.8f, -0.8f, 0.0f, 1.0f }
+};
+
+GLfloat colors[3][4] = {
+    { 1.0f, 0.0f, 0.0f, 1.0f },
+    { 0.0f, 1.0f, 0.0f, 1.0f },
+    { 0.0f, 0.0f, 1.0f, 1.0f }
+};
+
 void init()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
