@@ -23,6 +23,19 @@ GLfloat colors[3][4] = {
     { 0.0f, 0.0f, 1.0f, 1.0f }
 };
 
+const char* vertexShaderSource = R"(#version 150
+
+in  vec4 vPosition;
+in  vec4 vColor;
+out vec4 color;
+
+void main()
+{
+    color = vColor;
+    gl_Position = vPosition;
+}
+)";
+
 void init()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
