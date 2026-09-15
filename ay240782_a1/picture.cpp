@@ -78,7 +78,7 @@ void addShadedCircle(GLfloat cx, GLfloat cy, GLfloat radius, int segments)
         GLfloat angle = 2.0f * M_PI * i / segments;
         GLfloat x = cx + radius * cos(angle);
         GLfloat y = cy + radius * sin(angle);
-        GLfloat red = 1.0f - angle / (2.0f * M_PI);
+        GLfloat red = angle / (2.0f * M_PI);
         addVertex(x, y, red, 0.0f, 0.0f);
     }
 }
