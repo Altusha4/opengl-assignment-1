@@ -1,4 +1,4 @@
-# Assignment 1 — Computer Graphics
+# Assignment 1 – Computer Graphics
 
 **Author:** Altynay Yertay
 
