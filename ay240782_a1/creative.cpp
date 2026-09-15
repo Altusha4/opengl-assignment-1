@@ -23,6 +23,7 @@ int backgroundStart, backgroundCount;
 int bubbleOuterStart, bubbleOuterCount;
 int bubbleInnerStart, bubbleInnerCount;
 int tailOuterStart, tailInnerStart;
+int sigmaStart;
 
 void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
 {
@@ -73,6 +74,45 @@ void addTriangleShape(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
     addVertex(x3, y3, r, g, b);
 }
 
+void addQuad(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
+             GLfloat x3, GLfloat y3, GLfloat x4, GLfloat y4,
+             GLfloat r, GLfloat g, GLfloat b)
+{
+    addVertex(x1, y1, r, g, b);
+    addVertex(x2, y2, r, g, b);
+    addVertex(x3, y3, r, g, b);
+    addVertex(x4, y4, r, g, b);
+}
+
+void addSigma(GLfloat cx, GLfloat cy, GLfloat s)
+{
+    GLfloat black = 0.0f;
+
+    addQuad(cx - 0.75f * s, cy + 0.78f * s,
+            cx + 0.75f * s, cy + 0.78f * s,
+            cx + 0.75f * s, cy + 1.00f * s,
+            cx - 0.75f * s, cy + 1.00f * s,
+            black, black, black);
+
+    addQuad(cx - 0.75f * s, cy + 1.00f * s,
+            cx + 0.10f * s, cy + 0.00f * s,
+            cx + 0.40f * s, cy + 0.00f * s,
+            cx - 0.45f * s, cy + 1.00f * s,
+            black, black, black);
+
+    addQuad(cx - 0.75f * s, cy - 1.00f * s,
+            cx + 0.10f * s, cy + 0.00f * s,
+            cx + 0.40f * s, cy + 0.00f * s,
+            cx - 0.45f * s, cy - 1.00f * s,
+            black, black, black);
+
+    addQuad(cx - 0.75f * s, cy - 1.00f * s,
+            cx + 0.75f * s, cy - 1.00f * s,
+            cx + 0.75f * s, cy - 0.78f * s,
+            cx - 0.75f * s, cy - 0.78f * s,
+            black, black, black);
+}
+
 void buildScene()
 {
     backgroundStart = numVertices;
@@ -94,6 +134,9 @@ void buildScene()
     tailInnerStart = numVertices;
     addTriangleShape(0.085f, 0.37f, 0.235f, 0.37f, 0.145f, 0.17f,
                      1.0f, 1.0f, 1.0f);
+
+    sigmaStart = numVertices;
+    addSigma(0.0f, -0.42f, 0.45f);
 }
 
 void init()
@@ -135,6 +178,9 @@ void display()
     glDrawArrays(GL_TRIANGLES, tailOuterStart, 3);
     glDrawArrays(GL_TRIANGLE_FAN, bubbleInnerStart, bubbleInnerCount);
     glDrawArrays(GL_TRIANGLES, tailInnerStart, 3);
+
+    for (int i = 0; i < 4; i++)
+        glDrawArrays(GL_TRIANGLE_FAN, sigmaStart + i * 4, 4);
 
     glutSwapBuffers();
 }
