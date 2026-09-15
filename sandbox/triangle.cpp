@@ -47,6 +47,32 @@ void main()
 }
 )";
 
+GLuint createShaderProgram(const char* vsSource, const char* fsSource)
+{
+    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &vsSource, NULL);
+    glCompileShader(vs);
+
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fs, 1, &fsSource, NULL);
+    glCompileShader(fs);
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+
+    GLint ok;
+    glGetProgramiv(program, GL_LINK_STATUS, &ok);
+    if (!ok) {
+        char log[1024];
+        glGetProgramInfoLog(program, sizeof(log), NULL, log);
+        fprintf(stderr, "Shader error:\n%s\n", log);
+        exit(EXIT_FAILURE);
+    }
+    return program;
+}
+
 void init()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
