@@ -34,6 +34,19 @@ void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
     numVertices++;
 }
 
+void addEllipse(GLfloat cx, GLfloat cy, GLfloat rx, GLfloat ry,
+                GLfloat r, GLfloat g, GLfloat b, int segments)
+{
+    addVertex(cx, cy, r, g, b);
+
+    for (int i = 0; i <= segments; i++) {
+        GLfloat angle = 2.0f * M_PI * i / segments;
+        GLfloat x = cx + rx * cos(angle);
+        GLfloat y = cy + ry * sin(angle);
+        addVertex(x, y, r, g, b);
+    }
+}
+
 void buildScene()
 {
 }
