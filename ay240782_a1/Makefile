@@ -10,7 +10,7 @@ else
     LIBS     = -lGL -lGLEW -lglut
 endif
 
-PROGRAMS = red_triangle blue_square picture
+PROGRAMS = red_triangle blue_square picture creative
 
 all: $(PROGRAMS)
 
@@ -22,6 +22,9 @@ blue_square: blue_square.cpp InitShader.cpp InitShader.h
 
 picture: picture.cpp InitShader.cpp InitShader.h
 	$(CXX) $(CXXFLAGS) -o picture picture.cpp InitShader.cpp $(LIBS)
+
+creative: creative.cpp InitShader.cpp InitShader.h
+	$(CXX) $(CXXFLAGS) -o creative creative.cpp InitShader.cpp $(LIBS)
 
 clean:
 	rm -f $(PROGRAMS)
