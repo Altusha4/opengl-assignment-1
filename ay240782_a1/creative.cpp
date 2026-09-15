@@ -146,20 +146,14 @@ void addText(const char* text, GLfloat centerX, GLfloat topY, GLfloat px)
     int length = 0;
     while (text[length] != '\0') length++;
 
-    GLfloat width = (length * 4 - 1) * px;
-    GLfloat startX = centerX - width / 2.0f;
+    GLfloat startX = centerX - (length * 4 - 1) * px / 2.0f;
 
     for (int i = 0; i < length; i++) {
         const char* bits = glyph(text[i]);
-        for (int row = 0; row < 5; row++) {
-            for (int col = 0; col < 3; col++) {
-                if (bits[row * 3 + col] == '#') {
-                    GLfloat x = startX + (i * 4 + col) * px;
-                    GLfloat y = topY - row * px;
-                    addPixel(x, y, px, 0.1f);
-                }
-            }
-        }
+        for (int row = 0; row < 5; row++)
+            for (int col = 0; col < 3; col++)
+                if (bits[row * 3 + col] == '#')
+                    addPixel(startX + (i * 4 + col) * px, topY - row * px, px, 0.1f);
     }
 }
 
@@ -185,13 +179,13 @@ void buildScene()
     addTriangleShape(0.085f, 0.37f, 0.235f, 0.37f, 0.145f, 0.17f,
                      1.0f, 1.0f, 1.0f);
 
-    sigmaStart = numVertices;
-    addSigma(0.0f, -0.42f, 0.45f);
-
     textStart = numVertices;
     addText("I FEEL",   0.0f, 0.78f, 0.030f);
     addText("SO SIGMA", 0.0f, 0.57f, 0.030f);
     textCount = numVertices - textStart;
+
+    sigmaStart = numVertices;
+    addSigma(0.0f, -0.42f, 0.45f);
 }
 
 void init()
@@ -234,10 +228,10 @@ void display()
     glDrawArrays(GL_TRIANGLE_FAN, bubbleInnerStart, bubbleInnerCount);
     glDrawArrays(GL_TRIANGLES, tailInnerStart, 3);
 
+    glDrawArrays(GL_TRIANGLES, textStart, textCount);
+
     for (int i = 0; i < 4; i++)
         glDrawArrays(GL_TRIANGLE_FAN, sigmaStart + i * 4, 4);
-
-    glDrawArrays(GL_TRIANGLES, textStart, textCount);
 
     glutSwapBuffers();
 }
