@@ -78,7 +78,7 @@ void addShadedCircle(GLfloat cx, GLfloat cy, GLfloat radius, int segments)
         GLfloat angle = 2.0f * M_PI * i / segments;
         GLfloat x = cx + radius * cos(angle);
         GLfloat y = cy + radius * sin(angle);
-        GLfloat red = angle / (2.0f * M_PI);
+        GLfloat red = 1.0f - angle / (2.0f * M_PI);
         addVertex(x, y, red, 0.0f, 0.0f);
     }
 }
@@ -96,7 +96,7 @@ void addSquare(GLfloat cx, GLfloat cy, GLfloat radius, GLfloat shade)
 void buildScene()
 {
     ellipseStart = numVertices;
-    addEllipse(-0.6f, 0.73f, 0.2f, 0.12f, 1.0f, 0.0f, 0.0f, 60);
+    addEllipse(-0.6f, 0.73f, 0.24f, 0.144f, 1.0f, 0.0f, 0.0f, 60);
     ellipseCount = numVertices - ellipseStart;
 
     triangleStart = numVertices;
