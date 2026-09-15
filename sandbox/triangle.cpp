@@ -36,6 +36,17 @@ void main()
 }
 )";
 
+const char* fragmentShaderSource = R"(#version 150
+
+in  vec4 color;
+out vec4 fColor;
+
+void main()
+{
+    fColor = color;
+}
+)";
+
 void init()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
