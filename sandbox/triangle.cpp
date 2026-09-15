@@ -90,6 +90,14 @@ void init()
     GLuint program = createShaderProgram(vertexShaderSource, fragmentShaderSource);
     glUseProgram(program);
 
+    GLint vPosition = glGetAttribLocation(program, "vPosition");
+    glEnableVertexAttribArray(vPosition);
+    glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLint vColor = glGetAttribLocation(program, "vColor");
+    glEnableVertexAttribArray(vColor);
+    glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)sizeof(vertices));
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
 }
 
