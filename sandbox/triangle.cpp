@@ -87,6 +87,9 @@ void init()
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices), sizeof(colors), colors);
 
+    GLuint program = createShaderProgram(vertexShaderSource, fragmentShaderSource);
+    glUseProgram(program);
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
 }
 
