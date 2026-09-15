@@ -75,6 +75,10 @@ GLuint createShaderProgram(const char* vsSource, const char* fsSource)
 
 void init()
 {
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
 }
 
