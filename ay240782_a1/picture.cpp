@@ -19,6 +19,8 @@ GLfloat vertices[MAX_VERTICES][4];
 GLfloat colors[MAX_VERTICES][4];
 int numVertices = 0;
 
+int ellipseStart, ellipseCount;
+
 void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
 {
     vertices[numVertices][0] = x;
@@ -49,6 +51,9 @@ void addEllipse(GLfloat cx, GLfloat cy, GLfloat rx, GLfloat ry,
 
 void buildScene()
 {
+    ellipseStart = numVertices;
+    addEllipse(-0.6f, 0.73f, 0.2f, 0.12f, 1.0f, 0.0f, 0.0f, 60);
+    ellipseCount = numVertices - ellipseStart;
 }
 
 void init()
@@ -84,6 +89,7 @@ void init()
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_FAN, ellipseStart, ellipseCount);
     glutSwapBuffers();
 }
 
