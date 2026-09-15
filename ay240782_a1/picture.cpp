@@ -22,6 +22,7 @@ int numVertices = 0;
 int ellipseStart, ellipseCount;
 int triangleStart, triangleCount;
 int circleStart, circleCount;
+int squaresStart;
 
 void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
 {
@@ -82,6 +83,16 @@ void addShadedCircle(GLfloat cx, GLfloat cy, GLfloat radius, int segments)
     }
 }
 
+void addSquare(GLfloat cx, GLfloat cy, GLfloat radius, GLfloat shade)
+{
+    for (int i = 0; i < 4; i++) {
+        GLfloat angle = M_PI / 4.0f + i * M_PI / 2.0f;
+        GLfloat x = cx + radius * cos(angle);
+        GLfloat y = cy + radius * sin(angle);
+        addVertex(x, y, shade, shade, shade);
+    }
+}
+
 void buildScene()
 {
     ellipseStart = numVertices;
@@ -95,6 +106,13 @@ void buildScene()
     circleStart = numVertices;
     addShadedCircle(0.6f, 0.72f, 0.2f, 60);
     circleCount = numVertices - circleStart;
+
+    squaresStart = numVertices;
+    GLfloat radii[6] = { 0.806f, 0.672f, 0.537f, 0.403f, 0.269f, 0.134f };
+    for (int i = 0; i < 6; i++) {
+        GLfloat shade = (i % 2 == 0) ? 1.0f : 0.0f;
+        addSquare(0.0f, -0.2f, radii[i], shade);
+    }
 }
 
 void init()
@@ -133,6 +151,10 @@ void display()
     glDrawArrays(GL_TRIANGLE_FAN, ellipseStart, ellipseCount);
     glDrawArrays(GL_TRIANGLES, triangleStart, triangleCount);
     glDrawArrays(GL_TRIANGLE_FAN, circleStart, circleCount);
+
+    for (int i = 0; i < 6; i++)
+        glDrawArrays(GL_TRIANGLE_FAN, squaresStart + i * 4, 4);
+
     glutSwapBuffers();
 }
 
