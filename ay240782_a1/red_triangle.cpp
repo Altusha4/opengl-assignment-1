@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include "InitShader.h"
 
 GLfloat vertices[3][4] = {
     {  0.0f,  0.8f, 0.0f, 1.0f },
