@@ -1,8 +1,6 @@
-===============================================================
 Assignment 1 - Task 1: Getting Started
 Course: Computer Graphics
 Author: Altynay Yertay
-===============================================================
 
 DESCRIPTION
 -----------
