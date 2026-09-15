@@ -1,0 +1,104 @@
+# Assignment 1 — Task 1: Getting Started
+
+**Course:** Computer Graphics  
+**Author:** Altynay Yertay
+
+---
+
+## Description
+
+This folder contains two OpenGL programs:
+
+| Program | What it displays |
+|---|---|
+| `red_triangle` | A single red triangle |
+| `blue_square` | A single blue square that fits inside the window |
+
+Both open a 500×500 window with a black background.
+
+### From red_triangle to blue_square
+
+`blue_square.cpp` was created by modifying `red_triangle.cpp` in three places:
+
+1. **The vertex array** was changed from 3 triangle vertices to 4 square
+   corners at `(-0.6, -0.6)`, `(0.6, -0.6)`, `(0.6, 0.6)` and `(-0.6, 0.6)`,
+   so the square fits inside the window.
+
+2. **The color array** was changed from red to blue and extended from 3 to
+   4 vertices.
+
+3. **The draw call** was changed from `GL_TRIANGLES` with 3 vertices to
+   `GL_TRIANGLE_FAN` with 4 vertices. `GL_QUADS` was not used because it is
+   deprecated and unavailable in the core profile; `GL_TRIANGLE_FAN` builds
+   the square from two triangles, `(0,1,2)` and `(0,2,3)`.
+
+### Modern OpenGL only
+
+No deprecated OpenGL functions are used. The programs rely on the
+programmable pipeline only:
+
+- vertex array objects (VAO)
+- vertex buffer objects (VBO)
+- GLSL shaders
+- `glDrawArrays`
+
+Vertex positions and colors are passed to the vertex shader through the
+attributes `vPosition` and `vColor`.
+
+---
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `red_triangle.cpp` | Program 1 — red triangle |
+| `blue_square.cpp` | Program 2 — blue square |
+| `vshader.glsl` | Vertex shader, shared by both programs |
+| `fshader.glsl` | Fragment shader, shared by both programs |
+| `InitShader.cpp` | Loads, compiles and links the shader files |
+| `InitShader.h` | Header for `InitShader.cpp` |
+| `Makefile` | Builds both programs |
+| `README` | This file |
+
+---
+
+## How to build
+
+From inside this folder:
+
+```sh
+make
+```
+
+The default target builds and links both programs. To remove the
+executables:
+
+```sh
+make clean
+```
+
+## How to run
+
+```sh
+./red_triangle
+./blue_square
+```
+
+Press <kbd>Esc</kbd> or <kbd>Q</kbd> to close a program window.
+
+> **Important:** run the programs from inside this folder. The shader files
+> `vshader.glsl` and `fshader.glsl` are loaded using relative paths, so the
+> working directory must be this folder.
+
+---
+
+## Operating system
+
+Developed and tested on **macOS** (Apple Silicon, OpenGL 4.1 core profile,
+GLSL 1.50). On macOS no extra libraries are needed — OpenGL and GLUT are
+provided by the system frameworks, and only the Xcode Command Line Tools
+are required.
+
+The Makefile also detects **Linux** automatically and links against
+`-lGL -lGLEW -lglut`. There the packages `freeglut3-dev` and `libglew-dev`
+must be installed.

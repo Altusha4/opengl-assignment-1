@@ -10,22 +10,38 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <cmath>
 #include "InitShader.h"
 
-GLfloat vertices[3][4] = {
-    {  0.0f,  0.8f, 0.0f, 1.0f },
-    { -0.8f, -0.8f, 0.0f, 1.0f },
-    {  0.8f, -0.8f, 0.0f, 1.0f }
-};
+const int MAX_VERTICES = 2000;
 
-GLfloat colors[3][4] = {
-    { 1.0f, 0.0f, 0.0f, 1.0f },
-    { 1.0f, 0.0f, 0.0f, 1.0f },
-    { 1.0f, 0.0f, 0.0f, 1.0f }
-};
+GLfloat vertices[MAX_VERTICES][4];
+GLfloat colors[MAX_VERTICES][4];
+int numVertices = 0;
+
+void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
+{
+    vertices[numVertices][0] = x;
+    vertices[numVertices][1] = y;
+    vertices[numVertices][2] = 0.0f;
+    vertices[numVertices][3] = 1.0f;
+
+    colors[numVertices][0] = r;
+    colors[numVertices][1] = g;
+    colors[numVertices][2] = b;
+    colors[numVertices][3] = 1.0f;
+
+    numVertices++;
+}
+
+void buildScene()
+{
+}
 
 void init()
 {
+    buildScene();
+
     GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -55,7 +71,6 @@ void init()
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
     glutSwapBuffers();
 }
 
@@ -78,7 +93,7 @@ int main(int argc, char** argv)
 #endif
 
     glutInitWindowSize(500, 500);
-    glutCreateWindow("Red Triangle");
+    glutCreateWindow("Assignment 1 - Task 2");
 
     init();
 
