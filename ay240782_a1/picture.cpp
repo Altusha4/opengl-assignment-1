@@ -20,6 +20,7 @@ GLfloat colors[MAX_VERTICES][4];
 int numVertices = 0;
 
 int ellipseStart, ellipseCount;
+int triangleStart, triangleCount;
 
 void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
 {
@@ -49,11 +50,33 @@ void addEllipse(GLfloat cx, GLfloat cy, GLfloat rx, GLfloat ry,
     }
 }
 
+void addTriangle(GLfloat cx, GLfloat cy, GLfloat radius)
+{
+    GLfloat angles[3] = { 90.0f, 210.0f, 330.0f };
+
+    GLfloat triColors[3][3] = {
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.0f, 1.0f }
+    };
+
+    for (int i = 0; i < 3; i++) {
+        GLfloat angle = angles[i] * M_PI / 180.0f;
+        GLfloat x = cx + radius * cos(angle);
+        GLfloat y = cy + radius * sin(angle);
+        addVertex(x, y, triColors[i][0], triColors[i][1], triColors[i][2]);
+    }
+}
+
 void buildScene()
 {
     ellipseStart = numVertices;
     addEllipse(-0.6f, 0.73f, 0.2f, 0.12f, 1.0f, 0.0f, 0.0f, 60);
     ellipseCount = numVertices - ellipseStart;
+
+    triangleStart = numVertices;
+    addTriangle(0.0f, 0.78f, 0.24f);
+    triangleCount = numVertices - triangleStart;
 }
 
 void init()
@@ -90,6 +113,7 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLE_FAN, ellipseStart, ellipseCount);
+    glDrawArrays(GL_TRIANGLES, triangleStart, triangleCount);
     glutSwapBuffers();
 }
 
