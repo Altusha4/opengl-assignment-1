@@ -13,7 +13,7 @@
 #include <cmath>
 #include "InitShader.h"
 
-const int MAX_VERTICES = 2000;
+const int MAX_VERTICES = 3000;
 
 GLfloat vertices[MAX_VERTICES][4];
 GLfloat colors[MAX_VERTICES][4];
@@ -24,6 +24,7 @@ int bubbleOuterStart, bubbleOuterCount;
 int bubbleInnerStart, bubbleInnerCount;
 int tailOuterStart, tailInnerStart;
 int sigmaStart;
+int textStart, textCount;
 
 void addVertex(GLfloat x, GLfloat y, GLfloat r, GLfloat g, GLfloat b)
 {
@@ -113,6 +114,55 @@ void addSigma(GLfloat cx, GLfloat cy, GLfloat s)
             black, black, black);
 }
 
+const char* glyph(char c)
+{
+    switch (c) {
+        case 'I': return "###.#..#..#.###";
+        case 'F': return "####..####..#..";
+        case 'E': return "####..####..###";
+        case 'L': return "#..#..#..#..###";
+        case 'S': return "####..###..####";
+        case 'O': return "####.##.##.####";
+        case 'G': return "####..#.##.####";
+        case 'M': return "#.########.##.#";
+        case 'A': return "####.#####.##.#";
+        default:  return "...............";
+    }
+}
+
+void addPixel(GLfloat x, GLfloat y, GLfloat size, GLfloat shade)
+{
+    addVertex(x,        y,        shade, shade, shade);
+    addVertex(x + size, y,        shade, shade, shade);
+    addVertex(x + size, y - size, shade, shade, shade);
+
+    addVertex(x,        y,        shade, shade, shade);
+    addVertex(x + size, y - size, shade, shade, shade);
+    addVertex(x,        y - size, shade, shade, shade);
+}
+
+void addText(const char* text, GLfloat centerX, GLfloat topY, GLfloat px)
+{
+    int length = 0;
+    while (text[length] != '\0') length++;
+
+    GLfloat width = (length * 4 - 1) * px;
+    GLfloat startX = centerX - width / 2.0f;
+
+    for (int i = 0; i < length; i++) {
+        const char* bits = glyph(text[i]);
+        for (int row = 0; row < 5; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (bits[row * 3 + col] == '#') {
+                    GLfloat x = startX + (i * 4 + col) * px;
+                    GLfloat y = topY - row * px;
+                    addPixel(x, y, px, 0.1f);
+                }
+            }
+        }
+    }
+}
+
 void buildScene()
 {
     backgroundStart = numVertices;
@@ -137,6 +187,11 @@ void buildScene()
 
     sigmaStart = numVertices;
     addSigma(0.0f, -0.42f, 0.45f);
+
+    textStart = numVertices;
+    addText("I FEEL",   0.0f, 0.78f, 0.030f);
+    addText("SO SIGMA", 0.0f, 0.57f, 0.030f);
+    textCount = numVertices - textStart;
 }
 
 void init()
@@ -181,6 +236,8 @@ void display()
 
     for (int i = 0; i < 4; i++)
         glDrawArrays(GL_TRIANGLE_FAN, sigmaStart + i * 4, 4);
+
+    glDrawArrays(GL_TRIANGLES, textStart, textCount);
 
     glutSwapBuffers();
 }
