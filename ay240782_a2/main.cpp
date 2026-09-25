@@ -210,12 +210,11 @@ struct Mesh {
         glBindVertexArray(0);
     }
 
-    void draw(GLint first, GLsizei count) const
+    void draw() const
     {
         glBindVertexArray(vao);
-        glDrawArrays(mode, first, count);
+        glDrawArrays(mode, 0, (GLsizei)verts.size());
     }
-    void draw() const { draw(0, (GLsizei)verts.size()); }
 
     void release()
     {
@@ -250,27 +249,23 @@ static Tone shade(Tone t, float k)
     return t;
 }
 
-struct Row { GLint first; GLsizei count; float depth; };
-
 struct Cloud {
     Mesh mesh;
-    float x, y, speed, margin;
+    float x, y;
 };
 
 struct Scene {
     Mesh sky, sunGlow, sun, moonCraters, sea, swells, wash, rocks, boat;
     Mesh stars{GL_POINTS}, bigStars{GL_POINTS};
-    Mesh sunPath{GL_LINES}, wavesA{GL_LINES}, wavesB{GL_LINES}, foam{GL_LINES};
-    Mesh rockCracks{GL_LINES}, boatRig{GL_LINES}, birdsUp{GL_LINES}, birdsDown{GL_LINES};
+    Mesh sunPath{GL_LINES}, waves{GL_LINES}, foam{GL_LINES};
+    Mesh rockCracks{GL_LINES}, boatRig{GL_LINES}, birds{GL_LINES};
     std::vector<Cloud> cloudsBack, cloudsFront;
-    std::vector<Row> pathRows;
-    std::vector<Row> swellRows;
 
     std::vector<Mesh*> all()
     {
         std::vector<Mesh*> list = {&sky, &sunGlow, &sun, &moonCraters, &sea, &swells, &wash,
-                                   &rocks, &boat, &stars, &bigStars, &sunPath, &wavesA, &wavesB,
-                                   &foam, &rockCracks, &boatRig, &birdsUp, &birdsDown};
+                                   &rocks, &boat, &stars, &bigStars, &sunPath, &waves, &foam,
+                                   &rockCracks, &boatRig, &birds};
         for (Cloud& c : cloudsBack) list.push_back(&c.mesh);
         for (Cloud& c : cloudsFront) list.push_back(&c.mesh);
         return list;
@@ -333,9 +328,9 @@ static void buildSun(Mesh& glow, Mesh& disk, Mesh& craters)
 struct CloudStyle { Tone core, lit; };
 
 static Cloud makeCloud(std::mt19937& rng, const CloudStyle& st, float x, float y,
-                       float width, float thick, int puffs, float speed)
+                       float width, float thick, int puffs)
 {
-    Cloud c{Mesh(GL_TRIANGLES), x, y, speed, width * 0.8f};
+    Cloud c{Mesh(GL_TRIANGLES), x, y};
     std::uniform_real_distribution<float> r01(0.0f, 1.0f);
     struct Puff { float x, y, rx, ry; };
     std::vector<Puff> list;
@@ -361,19 +356,19 @@ static void buildClouds(std::vector<Cloud>& back, std::vector<Cloud>& front)
                                {rgb(1.00f, 0.74f, 0.42f, 0.75f), rgb(0.28f, 0.30f, 0.44f, 0.45f)}};
     std::mt19937 rng(21);
 
-    back.push_back(makeCloud(rng, pink,  150, 655, 460, 80, 10, 4.0f));
-    back.push_back(makeCloud(rng, pink,  620, 675, 500, 60, 10, 4.0f));
-    back.push_back(makeCloud(rng, lilac, 960, 625, 380, 70,  9, 4.0f));
-    back.push_back(makeCloud(rng, lilac, 360, 590, 450, 55, 10, 5.0f));
-    back.push_back(makeCloud(rng, pink,  820, 560, 420, 50,  9, 5.0f));
-    back.push_back(makeCloud(rng, dark,  200, 490, 520, 45, 12, 6.0f));
-    back.push_back(makeCloud(rng, dark,  700, 475, 560, 40, 12, 6.0f));
-    back.push_back(makeCloud(rng, dark, 1020, 505, 300, 35,  8, 6.0f));
+    back.push_back(makeCloud(rng, pink,   174, 655, 460, 80, 10));
+    back.push_back(makeCloud(rng, pink,   644, 675, 500, 60, 10));
+    back.push_back(makeCloud(rng, lilac,  984, 625, 380, 70,  9));
+    back.push_back(makeCloud(rng, lilac,  390, 590, 450, 55, 10));
+    back.push_back(makeCloud(rng, pink,   850, 560, 420, 50,  9));
+    back.push_back(makeCloud(rng, dark,   236, 490, 520, 45, 12));
+    back.push_back(makeCloud(rng, dark,   736, 475, 560, 40, 12));
+    back.push_back(makeCloud(rng, dark,  1056, 505, 300, 35,  8));
 
-    front.push_back(makeCloud(rng, streak, 300, 402, 460, 18, 10, 8.0f));
-    front.push_back(makeCloud(rng, streak, 830, 412, 380, 16,  9, 8.0f));
-    front.push_back(makeCloud(rng, streak, 520, 386, 300, 10,  8, 9.0f));
-    front.push_back(makeCloud(rng, streak,  90, 372, 260, 10,  7, 9.0f));
+    front.push_back(makeCloud(rng, streak, 348, 402, 460, 18, 10));
+    front.push_back(makeCloud(rng, streak, 878, 412, 380, 16,  9));
+    front.push_back(makeCloud(rng, streak, 574, 386, 300, 10,  8));
+    front.push_back(makeCloud(rng, streak, 144, 372, 260, 10,  7));
 }
 
 static void buildSea(Mesh& m)
@@ -392,7 +387,7 @@ static void buildSea(Mesh& m)
     }
 }
 
-static void buildSunPath(Mesh& m, std::vector<Row>& rows)
+static void buildSunPath(Mesh& m)
 {
     const Tone gold = {rgb(1.00f, 0.86f, 0.60f, 0.80f), rgb(0.88f, 0.92f, 1.00f, 0.85f)};
     std::mt19937 rng(3);
@@ -401,7 +396,6 @@ static void buildSunPath(Mesh& m, std::vector<Row>& rows)
         float d = (HORIZON - y) / (HORIZON - 150.0f);
         float halfW = 18.0f + 80.0f * d;
         Tone t = fade(gold, 1.0f - 0.6f * d);
-        Row row = {(GLint)m.verts.size(), 0, d};
         int dashes = 2 + (int)(r01(rng) * 3.0f);
         for (int i = 0; i < dashes; ++i) {
             float c = (r01(rng) * 2.0f - 1.0f) * halfW * (0.3f + 0.7f * r01(rng));
@@ -411,12 +405,10 @@ static void buildSunPath(Mesh& m, std::vector<Row>& rows)
             m.line({c - len, y}, {c, y}, fade(mid, 0.0f), mid, 1.0f);
             m.line({c, y}, {c + len, y}, mid, fade(mid, 0.0f), 1.0f);
         }
-        row.count = (GLsizei)m.verts.size() - row.first;
-        rows.push_back(row);
     }
 }
 
-static void buildWaves(Mesh& a, Mesh& b)
+static void buildWaves(Mesh& m)
 {
     const Tone whitecap = {rgb(0.86f, 0.90f, 0.92f, 0.55f), rgb(0.45f, 0.52f, 0.72f, 0.40f)};
     const Tone sheen    = {rgb(1.00f, 0.78f, 0.72f, 0.45f), rgb(0.30f, 0.35f, 0.55f, 0.30f)};
@@ -429,14 +421,13 @@ static void buildWaves(Mesh& a, Mesh& b)
         float len = 4.0f + 30.0f * d;
         Tone t = (i % 3 == 0) ? whitecap : (i % 3 == 1) ? trough : sheen;
         t = fade(t, 0.5f + 0.5f * d);
-        Mesh& m = (i % 2) ? a : b;
         float w = d > 0.5f ? 1.5f : 1.0f;
         m.line({x - len, y}, {x, y + 1.0f}, fade(t, 0.0f), t, w);
         m.line({x, y + 1.0f}, {x + len, y}, t, fade(t, 0.0f), w);
     }
 }
 
-static void buildSwells(Mesh& m, std::vector<Row>& rows)
+static void buildSwells(Mesh& m)
 {
     const Tone trough = {rgb(0.08f, 0.27f, 0.31f), rgb(0.02f, 0.04f, 0.09f)};
     const Tone face   = {rgb(0.30f, 0.66f, 0.60f), rgb(0.07f, 0.15f, 0.22f)};
@@ -452,7 +443,6 @@ static void buildSwells(Mesh& m, std::vector<Row>& rows)
         auto base  = [&](float x) { return y + amp * std::sin(k * x + ph); };
         auto crest = [&](float x) { return smooth01(1.2f * std::sin(k * 0.6f * x + ph * 2.3f)); };
 
-        Row row = {(GLint)m.verts.size(), 0, i / 3.0f};
         const float step = 8.0f;
         float jag0 = r01(rng);
         for (float x = -80.0f; x < SCENE_W + 80.0f; x += step) {
@@ -470,8 +460,6 @@ static void buildSwells(Mesh& m, std::vector<Row>& rows)
                    fade(pal::foam, 0.95f * c0), fade(pal::foam, 0.95f * c1), fade(pal::foam, 0), fade(pal::foam, 0));
             jag0 = jag1;
         }
-        row.count = (GLsizei)m.verts.size() - row.first;
-        rows.push_back(row);
     }
 }
 
@@ -563,28 +551,23 @@ static void buildBoat(Mesh& body, Mesh& rig, float s)
     rig.line({12 * s, 90 * s}, {0, 87 * s}, flag, flag, 1.5f);
 }
 
-static void buildBirds(Mesh& up, Mesh& down)
+static void buildBirds(Mesh& m)
 {
     const float birds[][3] = {{0, 0, 1.0f}, {30, 12, 0.8f}, {-28, 16, 0.85f},
                               {54, -6, 0.7f}, {16, -20, 0.75f}};
     for (const auto& b : birds) {
         float x = b[0], y = b[1], s = b[2];
-        auto add = [&](Mesh& m, float wingY, float tipY) {
-            Vec2 L = {x - 13 * s, y + tipY * s}, LM = {x - 6 * s, y + wingY * s}, C = {x, y};
-            Vec2 RM = {x + 6 * s, y + wingY * s}, R = {x + 13 * s, y + tipY * s};
-            m.line(L, LM, pal::silhouette, pal::silhouette, 1.5f);
-            m.line(LM, C, pal::silhouette, pal::silhouette, 1.5f);
-            m.line(C, RM, pal::silhouette, pal::silhouette, 1.5f);
-            m.line(RM, R, pal::silhouette, pal::silhouette, 1.5f);
-        };
-        add(up, 6.0f, 3.0f);
-        add(down, 2.0f, -5.0f);
+        Vec2 L = {x - 13 * s, y + 3 * s}, LM = {x - 6 * s, y + 6 * s}, C = {x, y};
+        Vec2 RM = {x + 6 * s, y + 6 * s}, R = {x + 13 * s, y + 3 * s};
+        m.line(L, LM, pal::silhouette, pal::silhouette, 1.5f);
+        m.line(LM, C, pal::silhouette, pal::silhouette, 1.5f);
+        m.line(C, RM, pal::silhouette, pal::silhouette, 1.5f);
+        m.line(RM, R, pal::silhouette, pal::silhouette, 1.5f);
     }
 }
 
 struct State {
-    bool  nightTarget = false;
-    float night = 0.0f;
+    bool  night = false;
     float sunX = 500.0f, sunY = 348.0f;
     float brightness = 1.0f;
     bool  screenshotRequested = false;
@@ -596,7 +579,7 @@ static void keyCallback(GLFWwindow* win, int key, int, int action, int)
 {
     if (action != GLFW_PRESS) return;
     if (key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(win, GLFW_TRUE);
-    if (key == GLFW_KEY_SPACE) g.nightTarget = !g.nightTarget;
+    if (key == GLFW_KEY_SPACE) g.night = !g.night;
     if (key == GLFW_KEY_P) g.screenshotRequested = true;
 }
 
@@ -613,10 +596,6 @@ static void update(GLFWwindow* win, float dt)
     if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS) g.brightness += 0.8f * dt;
     if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS) g.brightness -= 0.8f * dt;
     g.brightness = std::clamp(g.brightness, 0.3f, 1.8f);
-
-    float target = g.nightTarget ? 1.0f : 0.0f;
-    float step = dt / 2.0f;
-    g.night += std::clamp(target - g.night, -step, step);
 }
 
 static void drawMesh(const Mesh& m, float ox = 0, float oy = 0, float alpha = 1.0f)
@@ -626,24 +605,18 @@ static void drawMesh(const Mesh& m, float ox = 0, float oy = 0, float alpha = 1.
     m.draw();
 }
 
-static float wrapX(float start, float speed, float t, float margin)
+static void render(Scene& s, float pixelScale)
 {
-    return std::fmod(start + speed * t + margin, SCENE_W + 2 * margin) - margin;
-}
-
-static void render(Scene& s, float t, float pixelScale)
-{
-    const float night = smooth01(g.night);
-    glUniform1f(U.night, night);
+    glUniform1f(U.night, g.night ? 1.0f : 0.0f);
     glUniform1f(U.brightness, g.brightness);
 
     drawMesh(s.sky);
-    if (night > 0.01f) {
+    if (g.night) {
         glUniform1i(U.roundPoints, 1);
         glUniform1f(U.pointSize, 2.5f * pixelScale);
-        drawMesh(s.stars, 0, 0, night * (0.8f + 0.2f * std::sin(t * 1.7f)));
+        drawMesh(s.stars);
         glUniform1f(U.pointSize, 4.0f * pixelScale);
-        drawMesh(s.bigStars, 0, 0, night * (0.75f + 0.25f * std::sin(t * 2.3f + 1.0f)));
+        drawMesh(s.bigStars, 0, 0, 0.9f);
         glUniform1i(U.roundPoints, 0);
     }
 
@@ -653,45 +626,25 @@ static void render(Scene& s, float t, float pixelScale)
     drawMesh(s.sun, g.sunX, g.sunY);
     drawMesh(s.moonCraters, g.sunX, g.sunY);
 
-    for (const Cloud& c : s.cloudsBack) drawMesh(c.mesh, wrapX(c.x, c.speed, t, c.margin), c.y);
-    for (const Cloud& c : s.cloudsFront) drawMesh(c.mesh, wrapX(c.x, c.speed, t, c.margin), c.y);
+    for (const Cloud& c : s.cloudsBack) drawMesh(c.mesh, c.x, c.y);
+    for (const Cloud& c : s.cloudsFront) drawMesh(c.mesh, c.x, c.y);
     drawMesh(s.sunGlow, g.sunX, g.sunY, 0.25f * glowA);
 
     drawMesh(s.sea);
 
-    if (reflA > 0.01f) {
-        glUniform1f(U.alpha, reflA);
-        for (size_t i = 0; i < s.pathRows.size(); ++i) {
-            const Row& r = s.pathRows[i];
-            float jitter = std::sin(t * 2.2f + i * 0.9f) * (1.5f + 5.0f * r.depth);
-            glUniform2f(U.offset, g.sunX + jitter, 0.0f);
-            s.sunPath.draw(r.first, r.count);
-        }
-    }
+    if (reflA > 0.01f) drawMesh(s.sunPath, g.sunX, 0, reflA);
 
-    drawMesh(s.wavesA, 6.0f * std::sin(t * 0.8f), 0);
-    drawMesh(s.wavesB, -6.0f * std::sin(t * 0.8f), 0);
+    drawMesh(s.waves);
+    drawMesh(s.boat, 724, 286);
+    drawMesh(s.boatRig, 724, 286);
+    drawMesh(s.swells);
 
-    float boatX = wrapX(640, 14.0f, t, 60), boatY = 286.0f + 1.5f * std::sin(t * 1.6f);
-    drawMesh(s.boat, boatX, boatY);
-    drawMesh(s.boatRig, boatX, boatY);
-
-    glUniform1f(U.alpha, 1.0f);
-    for (size_t i = 0; i < s.swellRows.size(); ++i) {
-        const Row& r = s.swellRows[i];
-        glUniform2f(U.offset, (6.0f + 4.0f * i) * std::sin(t * 0.35f + i * 1.7f),
-                              (1.0f + 1.2f * i) * std::sin(t * 0.9f + i * 1.1f));
-        s.swells.draw(r.first, r.count);
-    }
-
-    float washX = 6.0f * std::sin(t * 0.4f), washY = 3.0f * std::sin(t * 0.9f);
-    drawMesh(s.foam, washX, washY);
-    drawMesh(s.wash, washX, washY);
+    drawMesh(s.foam);
+    drawMesh(s.wash);
     drawMesh(s.rocks);
     drawMesh(s.rockCracks);
 
-    const Mesh& birds = std::fmod(t * 2.5f, 1.0f) < 0.5f ? s.birdsUp : s.birdsDown;
-    drawMesh(birds, wrapX(300, 30.0f, t, 120), 560 + 12.0f * std::sin(t * 0.7f));
+    drawMesh(s.birds, 480, 550);
 }
 
 static void saveScreenshot(const char* path)
@@ -764,13 +717,13 @@ int main(int argc, char** argv)
     buildSun(scene.sunGlow, scene.sun, scene.moonCraters);
     buildClouds(scene.cloudsBack, scene.cloudsFront);
     buildSea(scene.sea);
-    buildSunPath(scene.sunPath, scene.pathRows);
-    buildWaves(scene.wavesA, scene.wavesB);
-    buildSwells(scene.swells, scene.swellRows);
+    buildSunPath(scene.sunPath);
+    buildWaves(scene.waves);
+    buildSwells(scene.swells);
     buildWash(scene.wash, scene.foam);
     buildRocks(scene.rocks, scene.rockCracks);
     buildBoat(scene.boat, scene.boatRig, 0.6f);
-    buildBirds(scene.birdsUp, scene.birdsDown);
+    buildBirds(scene.birds);
     for (Mesh* m : scene.all()) m->upload();
 
     glEnable(GL_BLEND);
@@ -788,16 +741,15 @@ int main(int argc, char** argv)
     };
 
     if (screenshotMode) {
-        const float t = 6.0f;
         for (int i = 0; i < 3; ++i) glfwPollEvents();
-        g.night = 0.0f;
-        render(scene, t, beginFrame());
+        g.night = false;
+        render(scene, beginFrame());
         saveScreenshot("screenshot_sunset.tga");
         glfwSwapBuffers(win);
-        g.night = 1.0f;
+        g.night = true;
         g.sunX = 640.0f;
         g.sunY = 540.0f;
-        render(scene, t, beginFrame());
+        render(scene, beginFrame());
         saveScreenshot("screenshot_night.tga");
         glfwSwapBuffers(win);
     } else {
@@ -809,7 +761,7 @@ int main(int argc, char** argv)
 
             glfwPollEvents();
             update(win, dt);
-            render(scene, (float)now, beginFrame());
+            render(scene, beginFrame());
             if (g.screenshotRequested) {
                 saveScreenshot("screenshot.tga");
                 g.screenshotRequested = false;

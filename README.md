@@ -11,8 +11,8 @@
 
 A finished 2D scene, "Sunset by the Sea", in a 1000x700 window. The sun sets on
 the sea horizon behind pink clouds. Turquoise swells break into white foam
-against a row of boulders, a sailboat crosses the horizon and gulls fly past.
-Press Space to switch to a moonlit night.
+against a row of boulders, a sailboat sails near the horizon and gulls fly over
+the sea. The picture is static. Press Space to switch to a moonlit night.
 
 | Sunset | Night |
 |---|---|
@@ -40,9 +40,9 @@ inside it.
   vertex stores a position, a sunset colour and a night colour.
 * **Colour interpolation:** the sky, sea, sun, wave faces, rocks and sails have
   different colours at their vertices.
-* **Uniforms:** `uNight` mixes the sunset and night colours, `uOffset` moves
-  objects, `uBrightness` scales the brightness and `uAlpha` fades the stars,
-  the glow and the reflection.
+* **Uniforms:** `uNight` mixes the sunset and night colours, `uOffset` places
+  objects and moves the sun, `uBrightness` scales the brightness and `uAlpha`
+  fades the glow and the reflection.
 
 The full breakdown is in [`ay240782_a2/report.md`](ay240782_a2/report.md).
 
@@ -50,7 +50,7 @@ The full breakdown is in [`ay240782_a2/report.md`](ay240782_a2/report.md).
 
 | Key | Action |
 |---|---|
-| <kbd>Space</kbd> | Switch between sunset and night (smooth 2 s transition) |
+| <kbd>Space</kbd> | Switch between sunset and night (instant) |
 | Arrow keys | Move the sun or moon. The reflection fades below the horizon |
 | <kbd>W</kbd> / <kbd>S</kbd> | Increase / decrease brightness |
 | <kbd>P</kbd> | Save the current frame to `screenshot.tga` |

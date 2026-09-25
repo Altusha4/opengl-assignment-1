@@ -8,10 +8,11 @@ breaks through a gap in the clouds as a bright yellow band. The sky goes from wa
 yellow at the horizon through peach and pink to grey-lilac. It is covered with
 soft pink overcast and a long dark cloud band, and thin cloud streaks cross in
 front of the sun. The sea is teal and turquoise. Rows of swells roll in, and
-their crests break into white foam. A golden path of light shimmers on the water.
-A small sailboat crosses the horizon and a flock of gulls flies past. Foam washes
-around a row of boulders in the foreground. Press **Space** to fade the scene to
-night over 2 seconds: the sun turns into a cratered moon, the reflection turns
+their crests break into white foam. A golden path of light lies on the water.
+A small sailboat sails near the horizon and a flock of gulls flies over the sea.
+Foam gathers around a row of boulders in the foreground. The scene is a still
+picture: nothing moves by itself. Press **Space** to switch the scene to
+night instantly: the sun turns into a cratered moon, the reflection turns
 silver, stars appear through the clouds and every colour cools down.
 
 | Sunset | Night |
@@ -22,7 +23,7 @@ silver, stars appear through the clouds and every colour cools down.
 
 | Key | Action |
 |---|---|
-| **Space** | Switch between sunset and night (smooth 2 s transition) |
+| **Space** | Switch between sunset and night (instant) |
 | **← → ↑ ↓** | Move the sun / moon (the reflection fades out as it sinks below the horizon) |
 | **W / S** | Increase / decrease global brightness |
 | **P** | Save the current frame to `screenshot.tga` |
@@ -40,10 +41,10 @@ silver, stars appear through the clouds and every colour cools down.
 | 6 | ≥ 4 RGB colours | `namespace pal` and the `build*()` functions use yellow, peach, pink, lilac, teal, turquoise, white, beige-grey, red and more. |
 | 7 | Colour interpolation | The sky (`buildSky`) and sea (`buildSea`) use bands with different top/bottom vertex colours. The sun disk has a white centre and an orange edge (`circle` radial gradient). Each wave face goes from dark teal to light turquoise (`buildSwells`). Each rock goes from a lit top to a dark bottom (`addRock`). The sails go from a light top to a pink base (`buildBoat`). |
 | 8 | Vertex & fragment shaders | `VERTEX_SHADER` converts scene pixels to NDC and mixes colours. `FRAGMENT_SHADER` outputs the colour and makes star points round and soft. Both are compiled in `createProgram()`. |
-| 9 | Uniforms | **`uNight`**: `mix(aDayColor, aNightColor, uNight)`, because every vertex has two colour attributes. **`uOffset`**: moves the sun, boat, clouds, gulls and foam, and each sun-path row and swell row separately. **`uBrightness`**: multiplies RGB (W/S keys). **`uAlpha`**: fades the stars in at night (with twinkle), fades the glow and the reflection as the sun sets. Extra: `uPointSize` and `uRoundPoints` for the stars. |
-| 10 | Controls | `keyCallback()` handles Space (toggles `nightTarget`), Esc and P. `update()` handles the held keys (arrows, W/S) and moves `g.night` smoothly toward the target. The reflection alpha is `smooth01((sunY − (HORIZON − R)) / 1.5R)`, so it goes to 0 once the sun is below the horizon. The sea is drawn after the sun, so the sea hides it. |
+| 9 | Uniforms | **`uNight`**: `mix(aDayColor, aNightColor, uNight)`, because every vertex has two colour attributes. **`uOffset`**: places the sun/moon (moved with the arrow keys), the sun path under it, the clouds, the boat and the gulls. **`uBrightness`**: multiplies RGB (W/S keys). **`uAlpha`**: fades the glow and the reflection as the sun sets below the horizon, and makes the big stars slightly transparent. Extra: `uPointSize` and `uRoundPoints` for the stars. |
+| 10 | Controls | `keyCallback()` handles Space (toggles `g.night`), Esc and P. `update()` handles the held keys (arrows, W/S). `render()` sets `uNight` to 0 or 1, so the switch is instant. The reflection alpha is `smooth01((sunY − (HORIZON − R)) / 1.5R)`, so it goes to 0 once the sun is below the horizon. The sea is drawn after the sun, so the sea hides it. |
 
-**Animation.** Everything is animated in `render()` from the time `t`. The boat moves with `wrapX` and bobs with a sine. Every cloud cluster drifts at its own speed and wraps around the screen. The gulls fly across and switch between the `birdsUp` and `birdsDown` meshes to flap. Each swell row rolls sideways and rises and falls with its own phase. Each sun-path row gets its own sine jitter, so the reflection shimmers. The ripples sway, the foam washes around the rocks, and the stars twinkle.
+**Static scene.** The picture does not animate. The only changes come from the keyboard: Space switches sunset and night, the arrows move the sun/moon and W/S change the brightness.
 
 **Other techniques.** Core profile only guarantees 1-pixel lines, so `Mesh::line()` draws thick lines as several parallel 1-px lines. Alpha blending (`GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA`) and 4× MSAA are enabled. Soft clouds and foam come from ellipses whose edge vertices have alpha 0. The sun glow is drawn a second time, faintly, after the clouds, so they look lit from behind. The moon's craters have alpha 0 in the sunset colour and are visible only at night.
 
