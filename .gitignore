@@ -13,3 +13,6 @@ blue_square
 picture
 creative
 *.zip
+build/
+*.tga
+DEFENSE_NOTES.md
