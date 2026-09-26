@@ -59,16 +59,24 @@ VAOs and VBOs.
 
 ## 2. Literature Review
 
-> **TODO (check before submission).** All 17 articles below were checked in the
-> Crossref database: authors, year, journal, volume, issue, pages and DOI are
-> taken from Crossref. The SJR quartile of each journal could **not** be checked
-> automatically, because the SCImago website refused automated requests (HTTP
-> 403). Please confirm on [scimagojr.com](https://www.scimagojr.com) that each
-> journal is in Q1 or Q2 in the Computer Graphics and Computer-Aided Design
-> category. Three articles in *IEEE Computer Graphics and Applications*
-> (Riesenfeld, 1981; Foley et al., 1984; Okino et al., 1984) were left out on
-> purpose, because a search result suggested that this journal is currently
-> ranked Q3.
+The review is based on 17 journal articles. For every article the authors, year,
+journal, volume, pages and DOI were checked in the Crossref database, and the
+journals were checked against the SCImago Journal Rank (SJR). All of them are
+ranked Q1 or Q2, as summarised in Table 1.
+
+***Table 1. Journals of the reviewed articles and their quartiles***
+
+| Journal | Quartile | Articles |
+|---------|------|------------------|
+| ACM Transactions on Graphics | Q1 | Alexa (2002); Blythe (2006); Kovar et al. (2002); Sumner and Popović (2004); Kavan et al. (2008); Lloyd et al. (2008); Jacobson et al. (2011) |
+| Computer Graphics Forum | Q1 | Slater et al. (1992); Owens et al. (2007) |
+| IEEE Transactions on Visualization and Computer Graphics | Q1 | Cohen-Or et al. (2003) |
+| IEEE Transactions on Pattern Analysis and Machine Intelligence | Q1 | Hartley (1997) |
+| Proceedings of the IEEE | Q1 | Owens et al. (2008) |
+| Communications of the ACM | Q1 | Fatahalian and Houston (2008) |
+| ACM Computing Surveys | Q1 | Sutherland, Sproull and Schumacker (1974) |
+| ACM Transactions on Information Systems | Q1 | Myers (1990) |
+| ACM Transactions on Computer-Human Interaction | Q1–Q2 | Myers (1995); Myers, Hudson and Pausch (2000) |
 
 **Event-driven interaction and user interface software.** Every GLUT program is
 event-driven: the application registers callback functions and the main loop
@@ -192,7 +200,7 @@ later topics:
 
 ### 4.1 Tools and Technologies Used
 
-***Table 1. Tools and technologies***
+***Table 2. Tools and technologies***
 
 | Component | Value and purpose |
 |---|---|
@@ -644,10 +652,10 @@ repeats what the grader will do.
 
 ### 6.2 Performance Evaluation
 
-The workload of both programs is very small. Table 2 lists the vertices and the
+The workload of both programs is very small. Table 3 lists the vertices and the
 draw calls per frame.
 
-***Table 2. Rendering workload per frame***
+***Table 3. Rendering workload per frame***
 
 | Window | Vertices in the VBO | Draw calls per frame |
 |---|---|---|
@@ -669,7 +677,7 @@ not the speed of the motion.
 
 ### 6.3 Issues and Debugging
 
-***Table 3. Issues encountered and their resolution***
+***Table 4. Issues encountered and their resolution***
 
 | Issue | Cause and resolution |
 |---|---|
@@ -707,7 +715,7 @@ TRANSLATE, changes X, Y and Z with six keys, changes the delta with two keys and
 resets everything with one key. The matrix `M = T * R * S` with `R = Rz * Ry * Rx`
 is built on the CPU and applied in the vertex shader.
 
-***Table 4. Requirements and where they are met***
+***Table 5. Requirements and where they are met***
 
 | Requirement | Where it is met |
 |---|---|
@@ -738,7 +746,7 @@ the cube shading that depends on its orientation.
 ## 8. References
 
 **Journal articles (Literature Review).** Authors, year, journal and DOI were
-checked in Crossref. TODO: confirm the SJR quartile of each journal (see section 2).
+checked in Crossref; the quartiles of the journals are given in Table 1.
 
 Alexa, M. (2002) Linear combination of transformations. *ACM Transactions on
 Graphics*, 21(3), 380–387. https://doi.org/10.1145/566654.566592
