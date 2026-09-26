@@ -44,7 +44,7 @@ inside it.
   objects and moves the sun, `uBrightness` scales the brightness and `uAlpha`
   fades the glow and the reflection.
 
-The full breakdown is in [`ay240782_a2/report.md`](ay240782_a2/report.md).
+The full report is in [`ay240782_a2/README.md`](ay240782_a2/README.md).
 
 ### Controls
 
