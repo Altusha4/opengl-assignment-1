@@ -5,6 +5,7 @@
 | Folder | Assignment |
 |---|---|
 | [`ay240782_a1`](ay240782_a1/) | Assignment 1: four basic OpenGL programs (see its [README](ay240782_a1/README.md)) |
+| [`ay240782_a2`](ay240782_a2/) | Assignment 2: Part A (windows, menus, animation) and Part B (3D cube transformations), see its [README](ay240782_a2/README.md) and [report](ay240782_a2/report.md) |
 | [`practice_postcard`](practice_postcard/) | Practice work: OpenGL Digital Postcard |
 
 ## Practice work: OpenGL Digital Postcard
