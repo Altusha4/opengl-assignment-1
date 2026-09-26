@@ -400,8 +400,9 @@ with `transpose = GL_TRUE`. The vertex shader only multiplies:
 
 **Keys and deltas.** The current transformation is chosen in the menu. Six keys
 add or subtract its delta on X, Y or Z. `+` doubles and `-` halves the delta of the
-current transformation, and `r` resets everything. Each transformation has its
-own delta: 0.1 for scale, 10 degrees for rotation and 0.1 for translation.
+current transformation, and `r` returns to the initial view: scale 1, rotation
+−45° about X and 35° about Y, and no translation. Each transformation has its own
+delta: 0.1 for scale, 10 degrees for rotation and 0.1 for translation.
 
 ```cpp
 case 'q': v[0] += delta[mode]; break;
@@ -518,21 +519,23 @@ frames were captured two seconds apart and are identical byte for byte.
 
 ![Fig.12](screenshots/partB_01_initial.png)
 
-***Fig.12 The cube at start-up, with no transformation***
+***Fig.12 The cube at start-up: rotated −45° about X and 35° about Y***
 
-Figure 12 illustrates the cube with the identity matrix. Without a projection the
-view looks straight along the Z axis, so only one face is visible. In normalized
-device coordinates the Z axis points into the screen, so the depth test keeps the
-face with the smaller Z: the face at `z = −0.5` with the blue, magenta, white and
-cyan corners.
+Figure 12 illustrates the initial view of the cube, the same as in the picture of
+the assignment. The program starts with a rotation of −45° about X and 35° about
+Y, which turns the white corner towards the viewer and places it in the centre of
+the window. Three faces meet at this corner, each with a gradient between the
+colours of its corners, and the depth test hides the three back faces. Because the
+rotation about X is applied first (`R = Rz * Ry * Rx`), X needs −45° and Y needs
+35°.
 
 ![Fig.13](screenshots/partB_02_rotated.png)
 
-***Fig.13 The cube after ROTATE: 30° about X and 40° about Y***
+***Fig.13 The cube after ROTATE: X changed from −45° to −15° and Y from 35° to 55°***
 
-Figure 13 illustrates the cube after pressing q three times and w four times in
-ROTATE mode. Three faces are visible, each with a gradient between the colours of
-its corners, and the depth test hides the back faces.
+Figure 13 illustrates the cube after pressing q three times and w twice in ROTATE
+mode. Each press adds the rotation delta of 10°, so the white corner moves away
+from the centre and the cube turns to show more of its green and cyan faces.
 
 ![Fig.14](screenshots/partB_03_scaled.png)
 
@@ -567,8 +570,9 @@ to 20°, and two presses of 'e' rotated the cube by 40° about Z.
 
 ***Fig.18 The cube after pressing r***
 
-Figure 18 illustrates the reset key: all transformations and deltas return to
-their initial values, and the image is identical byte for byte to Fig.12.
+Figure 18 illustrates the reset key: the cube returns to the initial view (scale
+1, rotation −45° about X and 35° about Y, no translation) and the deltas return to
+their default values. The image is identical byte for byte to Fig.12.
 
 ![Fig.19](screenshots/partB_08_menu.png)
 
@@ -719,21 +723,21 @@ is built on the CPU and applied in the vertex shader.
 
 | Requirement | Where it is met |
 |---|---|
-| A1. Double buffering | `GLUT_DOUBLE` in `main()` (partA.cpp 391, 393); `glutSwapBuffers()` in every display function (190, 201, 214) |
-| A2. Main window with the black & white square | `createMainWindow()` 329–353, `buildMainScene()` 148–157 |
-| A3. Ellipse in a subwindow with its own display and background | `createSubWindow()` 355–370 (`glutCreateSubWindow` 357), `displaySub()` 193–202 |
-| A4. Menu only in the subwindow for its background | `subMenu()` 260–272, attached in `createSubWindow()` 364–369 |
-| A5. Circle and triangle in "window 2", colour keys | `createWindow2()` 372–384, `keyboard2()` 301–321 |
+| A1. Double buffering | `GLUT_DOUBLE` in `main()` (partA.cpp 406, 408); `glutSwapBuffers()` in every display function (190, 201, 214) |
+| A2. Main window with the black & white square | `createMainWindow()` 329–358, `buildMainScene()` 148–157 |
+| A3. Ellipse in a subwindow with its own display and background | `createSubWindow()` 360–380 (`glutCreateSubWindow` 362), `displaySub()` 193–202 |
+| A4. Menu only in the subwindow for its background | `subMenu()` 260–272, attached in `createSubWindow()` 374–379 |
+| A5. Circle and triangle in "window 2", colour keys | `createWindow2()` 382–399, `keyboard2()` 301–321 |
 | A6. Animation with an idle function | `idle()` 217–229, uniforms in `vshaderA.glsl`, `setTransform()` 141–146 |
-| A7. Main menu with Stop, Start and the Square Colors submenu | `createMainWindow()` 343–352, `mainMenu()` 237–243, `squareColorMenu()` 245–258 |
+| A7. Main menu with Stop, Start and the Square Colors submenu | `createMainWindow()` 348–357, `mainMenu()` 237–243, `squareColorMenu()` 245–258 |
 | A8. Extra credit: circles at left clicks | `mainMouse()` 274–299, drawn in `displayMain()` 185–188 |
-| B1. Colour cube with corner colours | `colorcube()` 81–89, `quad()` 71–79 in partB.cpp |
-| B2. Depth test | `GLUT_DEPTH` 287, 289; `glEnable(GL_DEPTH_TEST)` 232; `GL_DEPTH_BUFFER_BIT` 240 |
-| B3. Menu SCALE / ROTATE / TRANSLATE and `M = T * R * S` | menu 302–306, `menu()` 276–280, matrix in `display()` 242–245 |
-| B4–B6. Six axis keys, two delta keys, one reset key | `keyboard()` 253–274, `resetTransformations()` 163–171 |
-| B7. Matrix built on the CPU, applied in the vertex shader | `mat4` functions 91–161, `glUniformMatrix4fv` 247, `vshaderB.glsl` |
+| B1. Colour cube with corner colours | `colorcube()` 82–90, `quad()` 72–80 in partB.cpp |
+| B2. Depth test | `GLUT_DEPTH` 289, 291; `glEnable(GL_DEPTH_TEST)` 234; `GL_DEPTH_BUFFER_BIT` 242 |
+| B3. Menu SCALE / ROTATE / TRANSLATE and `M = T * R * S` | menu 309–313, `menu()` 278–282, matrix in `display()` 244–247 |
+| B4–B6. Six axis keys, two delta keys, one reset key | `keyboard()` 255–276, `resetTransformations()` 164–172 |
+| B7. Matrix built on the CPU, applied in the vertex shader | `mat4` functions 92–162, `glUniformMatrix4fv` 249, `vshaderB.glsl` |
 | B8. No camera or projection | `vshaderB.glsl` uses only `model * vPosition` |
-| B9. Instructions are the only output | `printInstructions()` 183–201, called once in `main()` 308 |
+| B9. Instructions are the only output | `printInstructions()` 184–203, called once in `main()` 315 |
 
 Several directions follow naturally. The most direct one is a camera and a
 projection matrix in Part B, so that translation along Z changes the apparent
@@ -878,7 +882,7 @@ relative paths.
 | w / s | Increase / decrease Y |
 | e / d | Increase / decrease Z |
 | + / - | Double / halve the delta of the current transformation |
-| r | Reset all transformations and deltas |
+| r | Reset to the initial view (rotation −45° about X, 35° about Y) and the default deltas |
 | Esc | Quit |
 
 ### 9.4 The vertex shader of Part B

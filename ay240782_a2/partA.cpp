@@ -332,6 +332,11 @@ void createMainWindow()
     glutInitWindowPosition(100, 100);
     mainWindow = glutCreateWindow("Assignment 2 - Part A");
 
+#ifndef __APPLE__
+    glewExperimental = GL_TRUE;
+    glewInit();
+#endif
+
     buildMainScene();
     initScene(mainScene);
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -356,6 +361,11 @@ void createSubWindow()
 {
     subWindow = glutCreateSubWindow(mainWindow, 10, 10, 170, 110);
 
+#ifndef __APPLE__
+    glewExperimental = GL_TRUE;
+    glewInit();
+#endif
+
     buildSubScene();
     initScene(subScene);
 
@@ -374,6 +384,11 @@ void createWindow2()
     glutInitWindowSize(600, 600);
     glutInitWindowPosition(700, 100);
     window2 = glutCreateWindow("window 2");
+
+#ifndef __APPLE__
+    glewExperimental = GL_TRUE;
+    glewInit();
+#endif
 
     buildScene2();
     initScene(scene2);

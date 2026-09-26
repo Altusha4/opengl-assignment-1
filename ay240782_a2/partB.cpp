@@ -47,6 +47,7 @@ GLfloat vertexColors[8][3] = {
 
 enum { SCALE, ROTATE, TRANSLATE };
 
+const GLfloat DEFAULT_ROTATE[3] = { -45.0f, 35.0f, 0.0f };
 const GLfloat DEFAULT_DELTA[3] = { 0.1f, 10.0f, 0.1f };
 
 int mode = ROTATE;
@@ -164,7 +165,7 @@ void resetTransformations()
 {
     for (int i = 0; i < 3; i++) {
         scaleXYZ[i] = 1.0f;
-        rotateXYZ[i] = 0.0f;
+        rotateXYZ[i] = DEFAULT_ROTATE[i];
         translateXYZ[i] = 0.0f;
         delta[i] = DEFAULT_DELTA[i];
     }
@@ -192,9 +193,10 @@ void printInstructions()
     printf("  w / s   increase / decrease Y\n");
     printf("  e / d   increase / decrease Z\n");
     printf("  + / -   double / halve the delta of the current transformation\n");
-    printf("  r       reset all transformations and deltas\n");
+    printf("  r       reset to the initial view and the default deltas\n");
     printf("  Esc     quit\n");
     printf("\n");
+    printf("Initial view: rotate X -45, Y 35 degrees (white corner towards the viewer)\n");
     printf("Default deltas: scale 0.1, rotate 10 degrees, translate 0.1\n");
     printf("The model matrix is M = T * R * S with R = Rz * Ry * Rx\n");
     fflush(stdout);
@@ -293,6 +295,11 @@ int main(int argc, char** argv)
 
     glutInitWindowSize(600, 600);
     glutCreateWindow("Assignment 2 - Part B - ROTATE");
+
+#ifndef __APPLE__
+    glewExperimental = GL_TRUE;
+    glewInit();
+#endif
 
     init();
 
