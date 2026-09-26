@@ -419,7 +419,10 @@ The screenshots of the program windows were taken with the macOS `screencapture`
 tool by window. To produce every state reliably, a temporary test copy of each
 program called the same callback functions that the menus, the keyboard and the
 mouse call (for example `squareColorMenu(SQUARE_RED)` or `keyboard2('o', 0, 0)`).
-The menus themselves were captured by hand.
+The menus (Fig.2, Fig.3, Fig.4 and Fig.19) were opened in the normal programs with
+scripted right clicks and mouse moves (macOS `CGEvent`), and the area of the
+window with the open menu was captured with `screencapture -R`. Fig.20 shows the
+real Terminal window after running `./partB`.
 
 #### Part A
 
