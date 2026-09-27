@@ -568,11 +568,12 @@ to 20°, and two presses of 'e' rotated the cube by 40° about Z.
 
 ![Fig.18](screenshots/partB_07_reset.png)
 
-***Fig.18 The cube after pressing r***
+***Fig.18 The cube after pressing r: back to the initial view with the white corner towards the viewer***
 
 Figure 18 illustrates the reset key: the cube returns to the initial view (scale
 1, rotation −45° about X and 35° about Y, no translation) and the deltas return to
-their default values. The image is identical byte for byte to Fig.12.
+their default values. The white corner is again in the centre and three faces are
+visible. The image is identical byte for byte to Fig.12.
 
 ![Fig.19](screenshots/partB_08_menu.png)
 
